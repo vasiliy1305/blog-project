@@ -9,3 +9,5 @@ tonic.workspace = true
 prost.workspace = true
 serde.workspace = true
 anyhow.workspace = true
+
+blog-proto = { path = "../blog-proto" }
