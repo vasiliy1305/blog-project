@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package blog;
+
+// =========================
+// Service
+// =========================
+
+service BlogService {
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+
+    rpc CreatePost(CreatePostRequest) returns (CreatePostResponse);
+    rpc GetPost(GetPostRequest) returns (GetPostResponse);
+    rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse);
+    rpc DeletePost(DeletePostRequest) returns (DeletePostResponse);
+    rpc ListPosts(ListPostsRequest) returns (ListPostsResponse);
+}
+
+// =========================
+// Authentication
+// =========================
+
+message RegisterRequest {
+    string email = 1;
+    string password = 2;
+    string username = 3;
+}
+
+message RegisterResponse {
+    uint64 user_id = 1;
+    string access_token = 2;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string access_token = 1;
+}
+
+// =========================
+// Blog Post
+// =========================
+
+message Post {
+    uint64 id = 1;
+    uint64 author_id = 2;
+    string title = 3;
+    string content = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+// =========================
+// Create
+// =========================
+
+message CreatePostRequest {
+    string title = 1;
+    string content = 2;
+}
+
+message CreatePostResponse {
+    Post post = 1;
+}
+
+// =========================
+// Get
+// =========================
+
+message GetPostRequest {
+    uint64 id = 1;
+}
+
+message GetPostResponse {
+    Post post = 1;
+}
+
+// =========================
+// Update
+// =========================
+
+message UpdatePostRequest {
+    uint64 id = 1;
+    string title = 2;
+    string content = 3;
+}
+
+message UpdatePostResponse {
+    Post post = 1;
+}
+
+// =========================
+// Delete
+// =========================
+
+message DeletePostRequest {
+    uint64 id = 1;
+}
+
+message DeletePostResponse {
+    bool success = 1;
+}
+
+// =========================
+// List
+// =========================
+
+message ListPostsRequest {
+    uint32 page = 1;
+    uint32 page_size = 2;
+}
+
+message ListPostsResponse {
+    repeated Post posts = 1;
+    uint32 total = 2;
+}
