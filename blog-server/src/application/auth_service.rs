@@ -6,7 +6,4 @@ pub struct AuthService {
     users: HashMap<u64, User>,
 }
 
-
-impl AuthService {
-    
-}
+impl AuthService {}
