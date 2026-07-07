@@ -1,7 +1,6 @@
-use std::collections::HashMap;
+use crate::data::user_repository;
+use crate::domain::user::User;
 
-use crate::domain::{self, user::User};
-
-pub struct AuthService {}
+pub struct AuthService<R> {}
 
 impl AuthService {}
