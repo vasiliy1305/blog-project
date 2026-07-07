@@ -1,7 +1,6 @@
 use crate::domain::error::DomainError;
 use crate::domain::post::{CreatePost, Post, UpdatePost};
 use sqlx::PgPool;
-// use tonic::Code::Ok;
 
 pub trait PostRepository {
     async fn create(&self, create_post: &CreatePost, author_id: i64) -> Result<Post, DomainError>;
@@ -12,7 +11,7 @@ pub trait PostRepository {
 
     async fn delete(&self, id: i64) -> Result<(), DomainError>;
 
-    async fn list(&self, limit: u32, offset: u32) -> Result<Vec<Post>, DomainError>;
+    async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Post>, DomainError>;
 }
 
 pub struct PostgresPostRepository {
@@ -24,19 +23,6 @@ impl PostgresPostRepository {
         PostgresPostRepository { pool }
     }
 }
-
-// CREATE TABLE IF NOT EXISTS posts(
-//     id BIGSERIAL PRIMARY KEY,
-//     title VARCHAR NOT NULL,
-//     content TEXT,
-//     author_id BIGINT NOT NULL,
-//     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT  now(),
-//     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT  now(),
-
-//     FOREIGN KEY (author_id)
-//     REFERENCES  users(id)
-//     ON DELETE CASCADE
-// );
 
 impl PostRepository for PostgresPostRepository {
     async fn create(&self, create_post: &CreatePost, author_id: i64) -> Result<Post, DomainError> {
@@ -93,6 +79,52 @@ impl PostRepository for PostgresPostRepository {
         Ok(())
     }
 
-    async fn list(&self, limit: u32, offset: u32) -> Result<Vec<Post>, DomainError> {}
-    async fn update(&self, id: i64, post: &UpdatePost) -> Result<Post, DomainError> {}
+    async fn update(&self, id: i64, post: &UpdatePost) -> Result<Post, DomainError> {
+        let post = sqlx::query_as::<_, Post>(
+            r#"
+            UPDATE posts
+            SET
+                title = $1,
+                content = $2,
+                updated_at = now()
+            WHERE id = $3
+            RETURNING
+                id,
+                author_id,
+                title,
+                content,
+                created_at,
+                updated_at
+            "#,
+        )
+        .bind(&post.title)
+        .bind(&post.content)
+        .bind(id)
+        .fetch_one(&self.pool)
+        .await?;
+        Ok(post)
+    }
+
+    async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Post>, DomainError> {
+        let posts = sqlx::query_as::<_, Post>(
+            r#"
+                    SELECT
+                        id,
+                        author_id,
+                        title,
+                        content,
+                        created_at,
+                        updated_at
+                    FROM posts
+                    ORDER BY created_at DESC
+                    LIMIT $1
+                    OFFSET $2
+            "#,
+        )
+        .bind(limit)
+        .bind(offset)
+        .fetch_all(&self.pool)
+        .await?;
+        Ok(posts)
+    }
 }

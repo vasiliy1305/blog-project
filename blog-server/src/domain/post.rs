@@ -22,7 +22,6 @@ pub struct CreatePost {
 pub struct UpdatePost {
     pub title: String,
     pub content: String,
-    pub id: i64,
 }
 
 impl Post {
