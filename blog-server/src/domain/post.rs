@@ -8,28 +8,28 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Post {
-    pub id: u64,
+    pub id: i64,
     pub title: String,
     pub content: String,
-    pub author_id: u64,
+    pub author_id: i64,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Create {
+pub struct CreatePost {
     pub title: String,
     pub content: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Update {
+pub struct UpdatePost {
     pub title: String,
     pub content: String,
 }
 
 impl Post {
-    pub fn new(id: u64, title: String, content: String, author_id: u64) -> Self {
+    pub fn new(id: i64, title: String, content: String, author_id: i64) -> Self {
         Post {
             id,
             title,

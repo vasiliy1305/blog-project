@@ -27,6 +27,7 @@ prost-types = "0.14"
 # Database
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "migrate"] }
 dotenvy = "0.15"
+env_logger = "0.11" 
 
 # Security
 jsonwebtoken = "9"

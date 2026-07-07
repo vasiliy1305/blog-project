@@ -10,7 +10,7 @@ use infrastructure::config::Config;
 use sqlx::postgres::PgPoolOptions;
 use tonic::Code::Ok;
 
-use crate::infrastructure::database::{get_pool, run};
+use crate::infrastructure::database::{create_pool, run_migrations};
 
 #[actix_web::main]
 async fn main() {
@@ -18,14 +18,12 @@ async fn main() {
     env_logger::init();
 
     let cfg = Config::from_env().expect("invalid config");
-    let pool = get_pool(&cfg.database_url)
+    let pool = create_pool(&cfg.database_url)
         .await
         .expect("failed to connect to database");
-    _ = run(&pool).await.expect("migrations failed");
+    run_migrations(&pool).await.expect("migrations failed");
 
     println!("{:?}", cfg);
-
-
 
     // let cors = Cors::default()
     //     .allowed_origin(&cfg.cors_origin)
