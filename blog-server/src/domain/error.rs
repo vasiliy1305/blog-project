@@ -22,4 +22,7 @@ pub enum DomainError {
 
     #[error("Validation failed: {0}")]
     Validation(String),
+
+    #[error("Database error: {0}")]
+    Database(#[from] sqlx::Error), // немного портит архитектуру, но сильно упращает код
 }

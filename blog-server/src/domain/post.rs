@@ -1,12 +1,8 @@
-// •	В post.rs определите структуры:
-// o	Post — пост с полями: id, title, content, author_id, created_at, updated_at.
-// o	Структуры для запросов: создание (title, content) и обновление (title, content).
-// o	Реализуйте метод new для создания нового поста.
-
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use sqlx;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, sqlx::FromRow)]
 pub struct Post {
     pub id: i64,
     pub title: String,
@@ -26,6 +22,7 @@ pub struct CreatePost {
 pub struct UpdatePost {
     pub title: String,
     pub content: String,
+    pub id: i64,
 }
 
 impl Post {
