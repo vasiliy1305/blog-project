@@ -1,8 +1,8 @@
 use crate::data::user_repository::UserRepository;
-use crate::domain::error::{self, DomainError};
+use crate::domain::error::DomainError;
 use crate::domain::user::{CreateUser, Login, Registration, User};
 use crate::infrastructure::jwt::JwtService;
-use crate::infrastructure::password::{self, Password};
+use crate::infrastructure::password::Password;
 
 pub struct AuthService<R, P>
 where
