@@ -7,7 +7,7 @@ pub enum DomainError {
     UserNotFound(u64),
 
     #[error("User {0} already exists")]
-    UserAlreadyExists(u64),
+    UserAlreadyExists(String),
 
     #[error("Post {0} not found")]
     PostNotFound(u64),
