@@ -4,7 +4,7 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum DomainError {
     #[error("User {0} not found")]
-    UserNotFound(u64),
+    UserNotFound(String),
 
     #[error("User {0} already exists")]
     UserAlreadyExists(String),
@@ -23,6 +23,9 @@ pub enum DomainError {
 
     #[error("Validation failed: {0}")]
     Validation(String),
+
+    #[error("Registration failed: {0}")]
+    Registration(String),
 
     #[error("Database error: {0}")]
     Database(#[from] sqlx::Error), // немного портит архитектуру, но сильно упращает код
