@@ -10,7 +10,7 @@ pub enum DomainError {
     UserAlreadyExists(String),
 
     #[error("Post {0} not found")]
-    PostNotFound(u64),
+    PostNotFound(i64),
 
     #[error("Invalid credentials")]
     InvalidCredentials,

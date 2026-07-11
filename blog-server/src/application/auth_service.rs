@@ -59,7 +59,10 @@ where
             .await?
         {
             Some(user) => {
-                if self.password.verify_password(&login_info.password, &user.password_hash)? {
+                if self
+                    .password
+                    .verify_password(&login_info.password, &user.password_hash)?
+                {
                     match self.jwt.generate_token(user.id, &user.username) {
                         Err(error) => Err(DomainError::Validation(error.to_string())),
                         Ok(token) => Ok(AuthResponse {
