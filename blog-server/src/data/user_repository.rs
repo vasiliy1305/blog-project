@@ -1,7 +1,5 @@
 use crate::domain::error::DomainError;
 use crate::domain::user::{CreateUser, User};
-
-use chrono::{DateTime, Utc};
 use sqlx::PgPool;
 
 pub trait UserRepository {

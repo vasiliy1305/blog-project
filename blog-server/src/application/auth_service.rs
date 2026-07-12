@@ -3,6 +3,8 @@ use crate::domain::error::DomainError;
 use crate::domain::user::{CreateUser, Login, Registration, User};
 use crate::infrastructure::jwt::JwtService;
 use crate::infrastructure::password::Password;
+use chrono::{DateTime, Utc};
+use serde::Serialize;
 
 pub struct AuthService<R, P>
 where
@@ -44,7 +46,7 @@ where
                 match self.jwt.generate_token(user.id, &user.username) {
                     Err(error) => Err(DomainError::Registration(error.to_string())),
                     Ok(token) => Ok(AuthResponse {
-                        user: user,
+                        user: user.into(),
                         token: token,
                     }),
                 }
@@ -66,7 +68,7 @@ where
                     match self.jwt.generate_token(user.id, &user.username) {
                         Err(error) => Err(DomainError::Validation(error.to_string())),
                         Ok(token) => Ok(AuthResponse {
-                            user: user,
+                            user: user.into(),
                             token: token,
                         }),
                     }
@@ -79,7 +81,27 @@ where
     }
 }
 
+#[derive(Debug, Serialize)]
 pub struct AuthResponse {
-    pub user: User,
+    pub user: UserResponse,
     pub token: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct UserResponse {
+    pub id: i64,
+    pub username: String,
+    pub email: String,
+    pub created_at: DateTime<Utc>,
+}
+
+impl From<User> for UserResponse {
+    fn from(user: User) -> Self {
+        Self {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            created_at: user.created_at,
+        }
+    }
 }

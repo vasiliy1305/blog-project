@@ -3,50 +3,30 @@ mod data;
 mod domain;
 mod infrastructure;
 mod presentation;
+mod server;
 
-use actix_cors::Cors;
-use actix_web::{App, HttpServer, middleware::Logger, web};
-use infrastructure::config::Config;
-use sqlx::postgres::PgPoolOptions;
-use tonic::Code::Ok;
-
-use crate::infrastructure::database::{create_pool, run_migrations};
+use crate::infrastructure::{
+    config::Config,
+    database::{create_pool, run_migrations},
+};
 
 #[actix_web::main]
-async fn main() {
+async fn main() -> anyhow::Result<()> {
     dotenvy::dotenv().ok();
-    env_logger::init();
 
-    let cfg = Config::from_env().expect("invalid config");
-    let pool = create_pool(&cfg.database_url)
-        .await
-        .expect("failed to connect to database");
-    run_migrations(&pool).await.expect("migrations failed");
+    infrastructure::logging::init();
 
-    println!("{:?}", cfg);
+    let config = Config::from_env()?;
 
-    // let cors = Cors::default()
-    //     .allowed_origin(&cfg.cors_origin)
-    //     .allowed_methods(vec!["GET","POST","OPTIONS"])
-    //     .allowed_headers(vec![
-    //         actix_web::http::header::CONTENT_TYPE,
-    //         actix_web::http::header::AUTHORIZATION,
-    //     ])
-    //     .supports_credentials()
-    //     .max_age(600);
+    tracing::info!("Connecting to PostgreSQL");
 
-    // let addr = format!("{}:{}", cfg.host, cfg.port);
-    // println!("→ listening on http://{}", addr);
+    let pool = create_pool(&config.database_url).await?;
 
-    // HttpServer::new(move || {
-    //     App::new()
-    //         .wrap(Logger::default())
-    //         .wrap(cors.clone())
-    //         .app_data(web::Data::new(pool.clone()))
-    //         .app_data(web::Data::new(cfg.clone()))
-    //         .configure(presentation::routes::configure)
-    // })
-    // .bind(addr)?
-    // .run()
-    // .await
+    tracing::info!("Running database migrations");
+
+    run_migrations(&pool).await?;
+
+    server::run_http_server(config, pool).await?;
+
+    Ok(())
 }
