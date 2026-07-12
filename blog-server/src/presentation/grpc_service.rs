@@ -138,7 +138,7 @@ impl BlogGrpcService {
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = CreatePostResponse{
+        let responce = CreatePostResponse {
             post: Some(post_to_proto(post)),
         };
 
@@ -154,17 +154,18 @@ impl BlogGrpcService {
 
         let post = self
             .blog_service
-            .update(request.id, claims.user_id,
+            .update(
+                request.id,
+                claims.user_id,
                 &UpdatePost {
                     title: request.title,
                     content: request.content,
                 },
-                
             )
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = UpdatePostResponse{
+        let responce = UpdatePostResponse {
             post: Some(post_to_proto(post)),
         };
 
@@ -175,7 +176,18 @@ impl BlogGrpcService {
         &self,
         request: Request<DeletePostRequest>,
     ) -> Result<Response<DeletePostResponse>, Status> {
-        todo!()
+        let claims = self.get_claims(request.metadata())?;
+        let request = request.into_inner();
+
+        let post = self
+            .blog_service
+            .delete(request.id, claims.user_id)
+            .await
+            .map_err(domain_error_to_status)?;
+
+        let responce = DeletePostResponse { success: true };
+
+        Ok(Response::new(responce))
     }
 
     fn get_claims(&self, metadata: &MetadataMap) -> Result<Claims, Status> {
