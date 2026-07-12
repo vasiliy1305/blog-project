@@ -149,7 +149,26 @@ impl BlogGrpcService {
         &self,
         request: Request<UpdatePostRequest>,
     ) -> Result<Response<UpdatePostResponse>, Status> {
-        todo!()
+        let claims = self.get_claims(request.metadata())?;
+        let request = request.into_inner();
+
+        let post = self
+            .blog_service
+            .update(request.id, claims.user_id,
+                &UpdatePost {
+                    title: request.title,
+                    content: request.content,
+                },
+                
+            )
+            .await
+            .map_err(domain_error_to_status)?;
+
+        let responce = UpdatePostResponse{
+            post: Some(post_to_proto(post)),
+        };
+
+        Ok(Response::new(responce))
     }
 
     async fn delete_post(
