@@ -5,6 +5,10 @@ mod infrastructure;
 mod presentation;
 mod server;
 
+use std::sync::Arc;
+
+use infrastructure::jwt::JwtService;
+
 use crate::infrastructure::{
     config::Config,
     database::{create_pool, run_migrations},
@@ -26,7 +30,9 @@ async fn main() -> anyhow::Result<()> {
 
     run_migrations(&pool).await?;
 
-    server::run_http_server(config, pool).await?;
+    let jwt_service = Arc::new(JwtService::new(&config.jwt_secret));
+
+    server::run_http_server(config, pool, jwt_service).await?;
 
     Ok(())
 }

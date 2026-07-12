@@ -5,13 +5,14 @@ use crate::infrastructure::jwt::JwtService;
 use crate::infrastructure::password::Password;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
+use std::sync::Arc;
 
 pub struct AuthService<R, P>
 where
     R: UserRepository,
     P: Password,
 {
-    jwt: JwtService,
+    jwt: Arc<JwtService>,
     repository: R,
     password: P,
 }
@@ -21,7 +22,7 @@ where
     R: UserRepository,
     P: Password,
 {
-    pub fn new(jwt: JwtService, repository: R, password: P) -> Self {
+    pub fn new(jwt: Arc<JwtService>, repository: R, password: P) -> Self {
         AuthService {
             jwt,
             repository,

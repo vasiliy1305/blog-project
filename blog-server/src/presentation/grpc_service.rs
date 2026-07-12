@@ -69,10 +69,10 @@ impl BlogGrpcService {
             .await
             .map_err(domain_error_to_status)?;
 
-        let proto_posts: Vec<ProtoPost> = posts.into_iter().map(post_to_proto).collect();
-
-        let responce = ListPostsResponse { posts: proto_posts };
-        Ok(Response::new(responce))
+        let response = ListPostsResponse {
+            posts: posts.into_iter().map(post_to_proto).collect(),
+        };
+        Ok(Response::new(response))
     }
 
     async fn register(
@@ -91,11 +91,11 @@ impl BlogGrpcService {
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = RegisterResponse {
+        let response = RegisterResponse {
             user_id: user.user.id,
             access_token: user.token,
         };
-        Ok(Response::new(responce))
+        Ok(Response::new(response))
     }
 
     async fn login(
@@ -113,10 +113,10 @@ impl BlogGrpcService {
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = LoginResponse {
+        let response = LoginResponse {
             access_token: user.token,
         };
-        Ok(Response::new(responce))
+        Ok(Response::new(response))
     }
 
     async fn create_post(
@@ -138,11 +138,11 @@ impl BlogGrpcService {
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = CreatePostResponse {
+        let response = CreatePostResponse {
             post: Some(post_to_proto(post)),
         };
 
-        Ok(Response::new(responce))
+        Ok(Response::new(response))
     }
 
     async fn update_post(
@@ -165,11 +165,11 @@ impl BlogGrpcService {
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = UpdatePostResponse {
+        let response = UpdatePostResponse {
             post: Some(post_to_proto(post)),
         };
 
-        Ok(Response::new(responce))
+        Ok(Response::new(response))
     }
 
     async fn delete_post(
@@ -179,15 +179,14 @@ impl BlogGrpcService {
         let claims = self.get_claims(request.metadata())?;
         let request = request.into_inner();
 
-        let post = self
-            .blog_service
+        self.blog_service
             .delete(request.id, claims.user_id)
             .await
             .map_err(domain_error_to_status)?;
 
-        let responce = DeletePostResponse { success: true };
+        let response = DeletePostResponse { success: true };
 
-        Ok(Response::new(responce))
+        Ok(Response::new(response))
     }
 
     fn get_claims(&self, metadata: &MetadataMap) -> Result<Claims, Status> {

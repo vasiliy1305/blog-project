@@ -15,7 +15,13 @@ use crate::presentation::{
     middleware::jwt_validator,
 };
 
-pub async fn run_http_server(config: Config, pool: PgPool) -> std::io::Result<()> {
+use std::sync::Arc;
+
+pub async fn run_http_server(
+    config: Config,
+    pool: PgPool,
+    jwt_service: Arc<JwtService>,
+) -> std::io::Result<()> {
     let address = format!("{}:{}", config.host, config.port);
     let user_repository = PostgresUserRepository::new(pool.clone());
     let post_repository = PostgresPostRepository::new(pool);
@@ -24,7 +30,7 @@ pub async fn run_http_server(config: Config, pool: PgPool) -> std::io::Result<()
     let middleware_jwt_service = JwtService::new(&config.jwt_secret);
 
     let auth_service = web::Data::new(AuthService::new(
-        auth_jwt_service,
+        jwt_service.clone(),
         user_repository,
         PasswordArgon2 {},
     ));
