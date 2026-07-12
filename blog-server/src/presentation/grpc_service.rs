@@ -20,6 +20,8 @@ use crate::domain::user::{Login, Registration};
 use crate::infrastructure::jwt::{Claims, JwtService};
 use crate::infrastructure::password::PasswordArgon2;
 
+use blog_proto::blog::blog_service_server::BlogService as BlogServiceGrpc;
+
 pub struct BlogGrpcService {
     auth_service: Arc<AuthService<PostgresUserRepository, PasswordArgon2>>,
     blog_service: Arc<BlogService<PostgresPostRepository>>,
@@ -39,6 +41,27 @@ impl BlogGrpcService {
         }
     }
 
+    fn get_claims(&self, metadata: &MetadataMap) -> Result<Claims, Status> {
+        let authorization = metadata
+            .get("authorization")
+            .ok_or_else(|| Status::unauthenticated("missing authorization metadata"))?;
+
+        let authorization = authorization
+            .to_str()
+            .map_err(|_| Status::unauthenticated("invalid authorization metadata"))?;
+
+        let token = authorization
+            .strip_prefix("Bearer ")
+            .ok_or_else(|| Status::unauthenticated("expected Bearer token"))?;
+
+        self.jwt_service
+            .verify_token(token)
+            .map_err(|_| Status::unauthenticated("invalid or expired token"))
+    }
+}
+
+#[tonic::async_trait]
+impl BlogServiceGrpc for BlogGrpcService {
     async fn get_post(
         &self,
         request: Request<GetPostRequest>,
@@ -187,24 +210,6 @@ impl BlogGrpcService {
         let response = DeletePostResponse { success: true };
 
         Ok(Response::new(response))
-    }
-
-    fn get_claims(&self, metadata: &MetadataMap) -> Result<Claims, Status> {
-        let authorization = metadata
-            .get("authorization")
-            .ok_or_else(|| Status::unauthenticated("missing authorization metadata"))?;
-
-        let authorization = authorization
-            .to_str()
-            .map_err(|_| Status::unauthenticated("invalid authorization metadata"))?;
-
-        let token = authorization
-            .strip_prefix("Bearer ")
-            .ok_or_else(|| Status::unauthenticated("expected Bearer token"))?;
-
-        self.jwt_service
-            .verify_token(token)
-            .map_err(|_| Status::unauthenticated("invalid or expired token"))
     }
 }
 

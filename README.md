@@ -52,3 +52,41 @@ curl -i -X POST http://127.0.0.1:8080/api/posts \
 
   ---
   curl -i "http://127.0.0.1:8080/api/posts?limit=10&offset=0"
+
+  ---
+
+ss -ltn | grep 50051
+---
+grpcurl -plaintext localhost:50051 list
+
+---
+
+grpcurl \
+  -plaintext \
+  -import-path blog-proto/proto \
+  -proto blog.proto \
+  localhost:50051 list
+
+  ---
+grpcurl \
+  -plaintext \
+  -emit-defaults \
+  -import-path blog-proto/proto \
+  -proto blog.proto \
+  -d '{"limit":10,"offset":0}' \
+  localhost:50051 \
+  blog.BlogService/ListPosts
+
+
+---
+grpcurl \
+  -plaintext \
+  -import-path blog-proto/proto \
+  -proto blog.proto \
+  -d '{"id":1}' \
+  localhost:50051 \
+  blog.BlogService/GetPost
+
+  ---
+
+  
