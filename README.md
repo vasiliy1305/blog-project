@@ -89,4 +89,42 @@ grpcurl \
 
   ---
 
-  
+  grpcurl \
+  -plaintext \
+  -import-path blog-proto/proto \
+  -proto blog.proto \
+  -H "authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6Iml2YW4iLCJleHAiOjE3ODM5NjkzMjl9.puXJqHIdMsJjMPOs6DvdvtWmxuzBzKi7fQ2f4APQHqY" \
+  -d '{
+    "title":"Первый gRPC пост",
+    "content":"Пост создан через grpcurl"
+  }' \
+  localhost:50051 \
+  blog.BlogService/CreatePost
+
+  ---
+cargo run -p blog-server
+---
+
+  cargo run -p blog-cli -- register \
+  --username vasiliy2 \
+  --email vasiliy@example2.com \
+  --password secret123
+
+  ---
+
+
+  cargo run -p blog-cli -- login \
+  --username vasiliy2 \
+  --password secret123
+
+  ---
+
+  cargo run -p blog-cli -- create \
+  --title "Первый пост" \
+  --content "Проверка HTTP-клиента"
+
+  ---
+
+  cargo run -p blog-cli -- list
+
+  cargo run -p blog-cli -- get --id 2

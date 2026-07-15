@@ -4,10 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
 tokio.workspace = true
 tonic.workspace = true
 prost.workspace = true
-serde.workspace = true
-anyhow.workspace = true
 
 blog-proto = { path = "../blog-proto" }
