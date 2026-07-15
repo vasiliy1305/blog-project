@@ -11,8 +11,11 @@ const TOKEN_FILE: &str = ".blog_token";
 #[command(name = "blog-cli")]
 #[command(about = "CLI-клиент для управления блогом")]
 struct Cli {
-    #[arg(long, default_value = DEFAULT_HTTP_SERVER, global = true)]
-    server: String,
+    #[arg(long, global = true)]
+    grpc: bool,
+
+    #[arg(long, global = true)]
+    server: Option<String>,
 
     #[command(subcommand)]
     command: Commands,
@@ -88,7 +91,19 @@ async fn main() {
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
-    let mut client = BlogClient::new_http(cli.server)?;
+    let mut client = if cli.grpc {
+        let server = cli
+            .server
+            .unwrap_or_else(|| "http://127.0.0.1:50051".to_owned());
+
+        BlogClient::new_grpc(server).await?
+    } else {
+        let server = cli
+            .server
+            .unwrap_or_else(|| "http://127.0.0.1:8080".to_owned());
+
+        BlogClient::new_http(server)?
+    };
 
     if let Some(token) = load_token()? {
         client.set_token(token);

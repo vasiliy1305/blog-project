@@ -8,6 +8,8 @@ use blog_proto::blog::{
     RegisterRequest, RegisterResponse, UpdatePostRequest, UpdatePostResponse,
 };
 
+use blog_proto::blog::User as ProtoUser;
+
 use crate::application::{auth_service::AuthService, blog_service::BlogService};
 use crate::data::{
     post_repository::PostgresPostRepository, user_repository::PostgresUserRepository,
@@ -115,7 +117,12 @@ impl BlogServiceGrpc for BlogGrpcService {
             .map_err(domain_error_to_status)?;
 
         let response = RegisterResponse {
-            user_id: user.user.id,
+            user: Some(ProtoUser {
+                id: user.user.id,
+                username: user.user.username,
+                email: user.user.email,
+                created_at: user.user.created_at.to_rfc3339(),
+            }),
             access_token: user.token,
         };
         Ok(Response::new(response))
@@ -137,8 +144,15 @@ impl BlogServiceGrpc for BlogGrpcService {
             .map_err(domain_error_to_status)?;
 
         let response = LoginResponse {
+            user: Some(ProtoUser {
+                id: user.user.id,
+                username: user.user.username,
+                email: user.user.email,
+                created_at: user.user.created_at.to_rfc3339(),
+            }),
             access_token: user.token,
         };
+
         Ok(Response::new(response))
     }
 

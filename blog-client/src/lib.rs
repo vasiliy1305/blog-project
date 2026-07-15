@@ -55,16 +55,10 @@ impl BlogClient {
     ) -> Result<AuthResponse, BlogClientError> {
         let response = match &mut self.transport {
             Transport::Http(client) => client.register(username, email, password).await?,
-
-            Transport::Grpc(_) => {
-                return Err(BlogClientError::InvalidRequest(
-                    "gRPC transport is not implemented yet".to_owned(),
-                ));
-            }
+            Transport::Grpc(client) => client.register(username, email, password).await?,
         };
 
         self.token = Some(response.token.clone());
-
         Ok(response)
     }
 
@@ -75,26 +69,17 @@ impl BlogClient {
     ) -> Result<AuthResponse, BlogClientError> {
         let response = match &mut self.transport {
             Transport::Http(client) => client.login(username, password).await?,
-
-            Transport::Grpc(_) => {
-                return Err(BlogClientError::InvalidRequest(
-                    "gRPC transport is not implemented yet".to_owned(),
-                ));
-            }
+            Transport::Grpc(client) => client.login(username, password).await?,
         };
 
         self.token = Some(response.token.clone());
-
         Ok(response)
     }
 
     pub async fn get_post(&mut self, id: i64) -> Result<Post, BlogClientError> {
         match &mut self.transport {
             Transport::Http(client) => client.get_post(id).await,
-
-            Transport::Grpc(_) => Err(BlogClientError::InvalidRequest(
-                "gRPC transport is not implemented yet".to_owned(),
-            )),
+            Transport::Grpc(client) => client.get_post(id).await,
         }
     }
 
@@ -105,10 +90,7 @@ impl BlogClient {
     ) -> Result<Vec<Post>, BlogClientError> {
         match &mut self.transport {
             Transport::Http(client) => client.list_posts(limit, offset).await,
-
-            Transport::Grpc(_) => Err(BlogClientError::InvalidRequest(
-                "gRPC transport is not implemented yet".to_owned(),
-            )),
+            Transport::Grpc(client) => client.list_posts(limit, offset).await,
         }
     }
 
@@ -121,10 +103,7 @@ impl BlogClient {
 
         match &mut self.transport {
             Transport::Http(client) => client.create_post(token, title, content).await,
-
-            Transport::Grpc(_) => Err(BlogClientError::InvalidRequest(
-                "gRPC transport is not implemented yet".to_owned(),
-            )),
+            Transport::Grpc(client) => client.create_post(token, title, content).await,
         }
     }
 
@@ -138,10 +117,7 @@ impl BlogClient {
 
         match &mut self.transport {
             Transport::Http(client) => client.update_post(token, id, title, content).await,
-
-            Transport::Grpc(_) => Err(BlogClientError::InvalidRequest(
-                "gRPC transport is not implemented yet".to_owned(),
-            )),
+            Transport::Grpc(client) => client.update_post(token, id, title, content).await,
         }
     }
 
@@ -150,10 +126,7 @@ impl BlogClient {
 
         match &mut self.transport {
             Transport::Http(client) => client.delete_post(token, id).await,
-
-            Transport::Grpc(_) => Err(BlogClientError::InvalidRequest(
-                "gRPC transport is not implemented yet".to_owned(),
-            )),
+            Transport::Grpc(client) => client.delete_post(token, id).await,
         }
     }
 }
