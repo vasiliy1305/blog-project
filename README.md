@@ -128,3 +128,32 @@ cargo run -p blog-server
   cargo run -p blog-cli -- list
 
   cargo run -p blog-cli -- get --id 2
+
+  ----
+
+  cargo run -p blog-cli -- \
+  --grpc \
+  register \
+  --username grpc_user \
+  --email grpc_user@example.com \
+  --password secret123
+
+
+  cargo run -p blog-cli -- \
+  --grpc \
+  login \
+  --username grpc_user \
+  --password secret123
+
+  cargo run -p blog-cli -- \
+  --grpc \
+  create \
+  --title "gRPC пост" \
+  --content "Создан через tonic"
+
+  cargo run -p blog-cli -- --grpc list
+
+  ----
+
+  cd blog-wasm
+wasm-pack build --target web

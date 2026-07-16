@@ -1,0 +1,124 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 32px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cfcfcf;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #1976d2;
+    color: white;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+button:hover:not(:disabled) {
+    background: #1565c0;
+}
+
+button:disabled {
+    background: #999;
+    cursor: default;
+}
+
+#logout-button {
+    margin-top: 12px;
+    background: #d32f2f;
+}
+
+#logout-button:hover:not(:disabled) {
+    background: #b71c1c;
+}
+
+#reload-posts-button {
+    margin-bottom: 20px;
+}
+
+#status {
+    padding: 12px;
+    background: #fff8dc;
+    border-left: 4px solid #ffb300;
+    border-radius: 4px;
+    min-height: 20px;
+    margin-bottom: 24px;
+}
+
+article {
+    padding: 16px;
+    margin-bottom: 16px;
+    background: white;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+}
+
+article h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+article p {
+    white-space: pre-wrap;
+}
+
+article small {
+    display: block;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+article button {
+    margin-right: 10px;
+}
+
+article button:last-child {
+    background: #d32f2f;
+}
+
+article button:last-child:hover {
+    background: #b71c1c;
+}

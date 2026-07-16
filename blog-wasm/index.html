@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust Blog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Rust Blog</h1>
+
+    <section>
+        <h2>Регистрация</h2>
+
+        <form id="register-form">
+            <input id="register-username" type="text" placeholder="Имя пользователя" required>
+            <input id="register-email" type="email" placeholder="Email" required>
+            <input id="register-password" type="password" placeholder="Пароль" required>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Вход</h2>
+
+        <form id="login-form">
+            <input id="login-username" type="text" placeholder="Имя пользователя" required>
+            <input id="login-password" type="password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+        </form>
+
+        <button id="logout-button" type="button">Выйти</button>
+    </section>
+
+    <section>
+        <h2>Создание поста</h2>
+
+        <form id="create-post-form">
+            <input id="post-title" type="text" placeholder="Заголовок" required>
+            <textarea id="post-content" placeholder="Содержание" required></textarea>
+            <button type="submit">Создать пост</button>
+        </form>
+    </section>
+
+    <p id="status"></p>
+
+    <section>
+        <h2>Посты</h2>
+        <button id="reload-posts-button" type="button">Обновить список</button>
+        <div id="posts"></div>
+    </section>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
